@@ -1,0 +1,61 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DATABASE_URL_UNPOOLED")
+}
+
+model User {
+  id        String  @id @default(uuid())
+  nik       String  @unique
+  name      String  @db.VarChar(255)
+  password  String  @db.VarChar(255)
+  profile   Profile @relation(fields: [profileId], references: [id])
+  profileId String
+}
+
+model Profile {
+  id        String    @id @default(uuid())
+  team      Team      @relation(fields: [teamId], references: [id])
+  status    String?   @db.VarChar(255)
+  group     String?   @db.VarChar(255)
+  join_date DateTime?
+  title     String?   @db.VarChar(255)
+  role_auth String    @db.VarChar(255)
+  teamId    String
+  User      User[]
+}
+
+model Team {
+  id            String    @id @default(uuid())
+  team_name     String    @db.VarChar(255)
+  team_surename String?   @db.VarChar(255)
+  team_unit     Unit[]
+  Profile       Profile[]
+}
+
+model Unit {
+  id        String  @id @default(uuid())
+  unit_name String  @db.VarChar(255)
+  unit_desc String? @db.VarChar(255)
+  job       Job[]
+  Team      Team?   @relation(fields: [teamId], references: [id])
+  teamId    String?
+}
+
+model Job {
+  id       String  @id @default(uuid())
+  job_name String  @db.VarChar(255)
+  job_desc String? @db.VarChar(255)
+  Unit     Unit?   @relation(fields: [unitId], references: [id])
+  unitId   String?
+}

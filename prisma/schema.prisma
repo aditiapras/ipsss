@@ -1,0 +1,116 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "cockroachdb"
+  url      = env("DATABASE_URL_COC")
+}
+
+model User {
+  id        String  @id @default(uuid())
+  nik       String  @unique
+  name      String  @db.String(255)
+  password  String  @db.String(255)
+  profileId String?
+
+  profile Profile? @relation(fields: [profileId], references: [id])
+}
+
+model Profile {
+  id        String    @id @default(uuid())
+  status    String?   @db.String(255)
+  group     String?   @db.String(255)
+  join_date DateTime?
+  title     String?   @db.String(255)
+  role_auth String    @db.String(255)
+  area      String?   @db.String(255)
+  phase     String?   @db.String(255)
+
+  User  User[]
+  score Score[]
+
+  teamId String
+  unitId String?
+  jobId  String?
+
+  team Team  @relation(fields: [teamId], references: [id])
+  unit Unit? @relation(fields: [unitId], references: [id])
+  job  Job?  @relation(fields: [jobId], references: [id])
+}
+
+model Team {
+  id            String  @id @db.String(255)
+  team_name     String  @db.String(255)
+  team_surename String? @db.String(255)
+
+  team_unit Unit[]
+  Profile   Profile[]
+}
+
+model Unit {
+  id        String  @id @default(uuid())
+  unit_name String  @db.String(255)
+  unit_desc String? @db.String(255)
+
+  job     Job[]
+  Profile Profile[]
+
+  teamId String?
+
+  Team Team? @relation(fields: [teamId], references: [id])
+}
+
+model Job {
+  id       String  @id @default(uuid())
+  job_name String  @db.String(255)
+  job_desc String? @db.String(255)
+
+  Score   Score[]
+  Profile Profile[]
+
+  unitId String?
+
+  Unit Unit? @relation(fields: [unitId], references: [id])
+}
+
+model Score {
+  id             BigInt    @id @default(sequence())
+  score_category String    @db.String(255)
+  score_total    Int?
+  score_default  Int?      @default(100)
+  createdAt      DateTime  @default(now())
+  addedAt        DateTime? @default(now())
+  createdBy      String?
+
+  score_item ScoreItem[]
+
+  profileId String?
+  jobId     String?
+
+  Profile Profile? @relation(fields: [profileId], references: [id])
+  Job     Job?     @relation(fields: [jobId], references: [id])
+}
+
+model ScoreItem {
+  id           BigInt    @id @default(sequence())
+  item_name    String?   @db.String(255)
+  item_value   Int?
+  item_default Int?
+  item_total   Int?
+  createdAt    DateTime? @default(now())
+  addedAt      DateTime? @default(now())
+  updatedAt    DateTime? @default(now())
+  scoreId      BigInt?
+
+  Score Score? @relation(fields: [scoreId], references: [id])
+}
+
+model Log {
+  log_id      BigInt   @id @default(sequence())
+  log_ticket  String   @unique @default(uuid())
+  log_time    DateTime @default(now())
+  log_user    String?
+  log_action  String?
+  log_message String?
+}
