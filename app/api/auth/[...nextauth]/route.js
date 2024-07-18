@@ -34,7 +34,6 @@ export const authOptions = {
           if (user.length === 0) {
             return null;
           }
-          console.log(user[0]);
           const log = await prisma.log.create({
             data: {
               log_action: "LOGIN",
