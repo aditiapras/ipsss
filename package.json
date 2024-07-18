@@ -45,9 +45,6 @@
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
-    "eslint": "^9.7.0",
-    "eslint-config-next": "14.2.4",
-    "eslint-plugin-react-hooks": "^5.1.0-rc-163365a0-20240717",
     "postcss": "^8",
     "prisma": "^5.17.0",
     "tailwindcss": "^3.4.1"
