@@ -3,15 +3,15 @@ generator client {
 }
 
 datasource db {
-  provider = "cockroachdb"
-  url      = env("DATABASE_URL_COC")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model User {
   id        String  @id @default(uuid())
   nik       String  @unique
-  name      String  @db.String(255)
-  password  String  @db.String(255)
+  name      String  @db.VarChar(255)
+  password  String  @db.VarChar(255)
   profileId String?
 
   profile Profile? @relation(fields: [profileId], references: [id])
@@ -19,13 +19,13 @@ model User {
 
 model Profile {
   id        String    @id @default(uuid())
-  status    String?   @db.String(255)
-  group     String?   @db.String(255)
+  status    String?   @db.VarChar(255)
+  group     String?   @db.VarChar(255)
   join_date DateTime?
-  title     String?   @db.String(255)
-  role_auth String    @db.String(255)
-  area      String?   @db.String(255)
-  phase     String?   @db.String(255)
+  title     String?   @db.VarChar(255)
+  role_auth String    @db.VarChar(255)
+  area      String?   @db.VarChar(255)
+  phase     String?   @db.VarChar(255)
 
   User  User[]
   score Score[]
@@ -40,9 +40,9 @@ model Profile {
 }
 
 model Team {
-  id            String  @id @db.String(255)
-  team_name     String  @db.String(255)
-  team_surename String? @db.String(255)
+  id            String  @id @db.VarChar(255)
+  team_name     String  @db.VarChar(255)
+  team_surename String? @db.VarChar(255)
 
   team_unit Unit[]
   Profile   Profile[]
@@ -50,8 +50,8 @@ model Team {
 
 model Unit {
   id        String  @id @default(uuid())
-  unit_name String  @db.String(255)
-  unit_desc String? @db.String(255)
+  unit_name String  @db.VarChar(255)
+  unit_desc String? @db.VarChar(255)
 
   job     Job[]
   Profile Profile[]
@@ -63,8 +63,8 @@ model Unit {
 
 model Job {
   id       String  @id @default(uuid())
-  job_name String  @db.String(255)
-  job_desc String? @db.String(255)
+  job_name String  @db.VarChar(255)
+  job_desc String? @db.VarChar(255)
 
   Score   Score[]
   Profile Profile[]
@@ -75,8 +75,8 @@ model Job {
 }
 
 model Score {
-  id             BigInt    @id @default(sequence())
-  score_category String    @db.String(255)
+  id             BigInt    @id @default(autoincrement())
+  score_category String    @db.VarChar(255)
   score_total    Int?
   score_default  Int?      @default(100)
   createdAt      DateTime  @default(now())
@@ -93,8 +93,8 @@ model Score {
 }
 
 model ScoreItem {
-  id           BigInt    @id @default(sequence())
-  item_name    String?   @db.String(255)
+  id           BigInt    @id @default(autoincrement())
+  item_name    String?   @db.VarChar(255)
   item_value   Int?
   item_default Int?
   item_total   Int?
@@ -107,7 +107,7 @@ model ScoreItem {
 }
 
 model Log {
-  log_id      BigInt   @id @default(sequence())
+  log_id      BigInt   @id @default(autoincrement())
   log_ticket  String   @unique @default(uuid())
   log_time    DateTime @default(now())
   log_user    String?
