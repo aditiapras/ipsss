@@ -36,7 +36,10 @@ export default function TeamMember({ team }) {
 
       setTimeout(async () => {
         await bulkImport(json);
+router.refresh();
       }, 2000);
+
+window.location.reload();
     };
     reader.readAsArrayBuffer(file);
   };
